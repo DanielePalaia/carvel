@@ -21,7 +21,13 @@ spec:
   replicas: 1
   imagePullSecrets:
   - name: tanzu-rabbitmq-registry-creds
-  securityContext: {}
+ override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            containers: []
+            securityContext: {}
 EOF
 
 printf "%bWaiting for RabbitmqCluster to report AllReplicasReady...%b\n" "$GREEN" "$NO_COLOR"
