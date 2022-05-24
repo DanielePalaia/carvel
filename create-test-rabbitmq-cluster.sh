@@ -21,7 +21,7 @@ spec:
   replicas: 1
   imagePullSecrets:
   - name: tanzu-rabbitmq-registry-creds
- override:
+  override:
     statefulSet:
       spec:
         template:
