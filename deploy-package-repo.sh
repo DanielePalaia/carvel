@@ -46,8 +46,8 @@ if [[ $ENVIRONMENT != "openshift" ]]; then
     export INSTALL_REGISTRY_USERNAME="$TANZU_NET_USER"
     export INSTALL_REGISTRY_PASSWORD="$TANZU_NET_PASSWORD"
     ./install.sh --yes
+    popd
 fi
-popd
 
 printf "%bCreating imagePullSecret & SecretExport...%b\n" "$GREEN" "$NO_COLOR"
 kubectl create namespace secrets-ns
