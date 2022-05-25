@@ -8,6 +8,7 @@ RED='\033[0;31m'
 NO_COLOR='\033[0m'
 
 NAMESPACE=${1:-"rabbitmq-system"}
+ENVIRONMENT=${1:-"tanzu"}
 
 printf "%bCreating RabbitmqCluster...%b\n" "$GREEN" "$NO_COLOR"
 if [[ $ENVIRONMENT != "openshift" ]]; then
