@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 set -exo pipefail
 
 GREEN='\033[0;32m'
@@ -11,6 +13,7 @@ if [ -z "$BUNDLE_VERSION" ]; then
 fi
 
 NAMESPACE=${2:-"rabbitmq-system"}
+ENVIRONMENT=${3:-"tanzu"}
 
 DOCKER_REGISTRY_USERNAME=${DOCKER_REGISTRY_USERNAME:-$(lpass show "Shared-RabbitMQ for Kubernetes/pivnet-dev-registry-ci" --notes | jq -r .name)}
 DOCKER_REGISTRY_PASSWORD=${DOCKER_REGISTRY_PASSWORD:-$(lpass show "Shared-RabbitMQ for Kubernetes/pivnet-dev-registry-ci" --notes | jq -r .token)}
@@ -18,6 +21,33 @@ PIVNET_API_TOKEN=${PIVNET_API_TOKEN:-$(lpass show "Shared-RabbitMQ for Kubernete
 TANZU_NET_USER=${TANZU_NET_USER:-$(lpass show "Shared-RabbitMQ for Kubernetes/Pivnet user - shared" --username)}
 TANZU_NET_PASSWORD=${TANZU_NET_PASSWORD:-$(lpass show "Shared-RabbitMQ for Kubernetes/Pivnet user - shared" --password)}
 TCE_VERSION=${TCE_VERSION:-1.1.0}
+
+if [[ $ENVIRONMENT != "openshift" ]]; then
+
+    #Install Tanzu Cluster Essentials
+    PLATFORM=$(uname)
+    platform=$(echo $PLATFORM | tr A-Z a-z)
+    printf "%bInstalling Tanzu Cluster Essentials...%b\n" "$GREEN" "$NO_COLOR"
+    mkdir -p "$(pwd)"/tmp/tanzu-cluster-essentials
+
+    install="$(pwd)"/tmp/tanzu-cluster-essentials/install.sh
+    if [[ -f "$install" ]]; then
+        printf "%bInstall script found, skipping download...%b\n" "$GREEN" "$NO_COLOR"
+    else
+        pivnet login --api-token="$PIVNET_API_TOKEN"
+        pivnet download-product-files --product-slug='tanzu-cluster-essentials' --release-version="$TCE_VERSION" --glob="tanzu-cluster-essentials-$platform-amd64-*.tgz" -d "$(pwd)/tmp"
+
+        tar -xvf "$(pwd)/tmp/tanzu-cluster-essentials-$platform-amd64-$TCE_VERSION.tgz" -C "$(pwd)"/tmp/tanzu-cluster-essentials
+    fi
+
+    pushd "$(pwd)"/tmp/tanzu-cluster-essentials
+    export INSTALL_BUNDLE=registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle:"$TCE_VERSION"
+    export INSTALL_REGISTRY_HOSTNAME=registry.tanzu.vmware.com
+    export INSTALL_REGISTRY_USERNAME="$TANZU_NET_USER"
+    export INSTALL_REGISTRY_PASSWORD="$TANZU_NET_PASSWORD"
+    ./install.sh --yes
+fi
+popd
 
 printf "%bCreating imagePullSecret & SecretExport...%b\n" "$GREEN" "$NO_COLOR"
 kubectl create namespace secrets-ns
