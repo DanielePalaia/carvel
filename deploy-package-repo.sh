@@ -22,7 +22,7 @@ TANZU_NET_USER=${TANZU_NET_USER:-$(lpass show "Shared-RabbitMQ for Kubernetes/Pi
 TANZU_NET_PASSWORD=${TANZU_NET_PASSWORD:-$(lpass show "Shared-RabbitMQ for Kubernetes/Pivnet user - shared" --password)}
 TCE_VERSION=${TCE_VERSION:-1.1.0}
 
-if [[ $ENVIRONMENT != "openshift" ]]; then
+if [[ "$ENVIRONMENT" != "openshift" ]]; then
 
     #Install Tanzu Cluster Essentials
     PLATFORM=$(uname)
