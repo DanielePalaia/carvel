@@ -11,7 +11,7 @@ NAMESPACE=${1:-"rabbitmq-system"}
 ENVIRONMENT=${1:-"tanzu"}
 
 printf "%bCreating RabbitmqCluster...%b\n" "$GREEN" "$NO_COLOR"
-if [[ $ENVIRONMENT != "openshift" ]]; then
+if [[ "$ENVIRONMENT" != "openshift" ]]; then
 cat << EOF | kapp deploy -a my-tanzu-rabbit -f- -y
 ---
 apiVersion: rabbitmq.com/v1beta1
