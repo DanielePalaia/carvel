@@ -7,7 +7,12 @@ ORANGE='\033[0;33m'
 RED='\033[0;31m'
 NO_COLOR='\033[0m'
 
-NAMESPACE=${1:-"rabbitmq-system"}
+NAMESPACE="$1"
+if [ -z "$NAMESPACE" ]; then
+  echo 'Please provide the Kubernetes namespace  where you want to deploy the RabbitMQ cluster'
+  exit 1
+fi
+
 ENVIRONMENT=${2:-"tanzu"}
 
 printf "%bCreating RabbitmqCluster...%b\n" "$GREEN" "$NO_COLOR"
