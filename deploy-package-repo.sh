@@ -12,17 +12,23 @@ if [ -z "$BUNDLE_VERSION" ]; then
   exit 1
 fi
 
-NAMESPACE=${2:-"rabbitmq-system"}
+NAMESPACE="$2"
+if [ -z "$NAMESPACE" ]; then
+  echo 'Please provide the Kubernetes namespace  where you want to deploy the PackageRepo'
+  exit 1
+fi
+
 ENVIRONMENT=${3:-"tanzu"}
 
 DOCKER_REGISTRY_USERNAME=${DOCKER_REGISTRY_USERNAME:-$(lpass show "Shared-RabbitMQ for Kubernetes/pivnet-dev-registry-ci" --notes | jq -r .name)}
 DOCKER_REGISTRY_PASSWORD=${DOCKER_REGISTRY_PASSWORD:-$(lpass show "Shared-RabbitMQ for Kubernetes/pivnet-dev-registry-ci" --notes | jq -r .token)}
-PIVNET_API_TOKEN=${PIVNET_API_TOKEN:-$(lpass show "Shared-RabbitMQ for Kubernetes/pivnet-api-token" --password)}
-TANZU_NET_USER=${TANZU_NET_USER:-$(lpass show "Shared-RabbitMQ for Kubernetes/Pivnet user - shared" --username)}
-TANZU_NET_PASSWORD=${TANZU_NET_PASSWORD:-$(lpass show "Shared-RabbitMQ for Kubernetes/Pivnet user - shared" --password)}
-TCE_VERSION=${TCE_VERSION:-1.1.0}
 
 if [[ "$ENVIRONMENT" != "openshift" ]]; then
+
+    PIVNET_API_TOKEN=${PIVNET_API_TOKEN:-$(lpass show "Shared-RabbitMQ for Kubernetes/pivnet-api-token" --password)}
+    TANZU_NET_USER=${TANZU_NET_USER:-$(lpass show "Shared-RabbitMQ for Kubernetes/Pivnet user - shared" --username)}
+    TANZU_NET_PASSWORD=${TANZU_NET_PASSWORD:-$(lpass show "Shared-RabbitMQ for Kubernetes/Pivnet user - shared" --password)}
+    TCE_VERSION=${TCE_VERSION:-1.1.0}
 
     #Install Tanzu Cluster Essentials
     PLATFORM=$(uname)
