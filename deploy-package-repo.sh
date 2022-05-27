@@ -53,6 +53,14 @@ if [[ "$ENVIRONMENT" != "openshift" ]]; then
     export INSTALL_REGISTRY_PASSWORD="$TANZU_NET_PASSWORD"
     ./install.sh --yes
     popd
+
+    else
+      overlay_path = $( dirname -- "$0"; )/openshift-overlay
+      ytt -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml -f $overlay_path/kapp-overlay.yml > $overlay_path/kapp.yml
+      ytt -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/latest/download/release.yml -f $overlay_path/secretgen-overlay.yml > $overlay_path/overlay/secretgen.yml
+      kapp deploy -y -a kc -f $overlay_path/kapp.yml
+      kapp deploy -y -a sg -f $overlay_path/secretgen.yml
+
 fi
 
 printf "%bCreating imagePullSecret & SecretExport...%b\n" "$GREEN" "$NO_COLOR"

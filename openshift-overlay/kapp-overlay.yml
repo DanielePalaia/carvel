@@ -1,0 +1,17 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:overlay", "overlay")
+#@ deployment = overlay.subset({"kind": "Deployment"})
+#@ cluster_operator = overlay.subset({"metadata": {"name": "kapp-controller"}})
+#@overlay/match by=overlay.and_op(deployment, cluster_operator),expects="1+"
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.subset({"name": "kapp-controller"}),expects="1+"
+      -
+        #@overlay/match missing_ok=True
+        env:
+        - name: IMGPKG_ENABLE_IAAS_AUTH
+          value: false
+
