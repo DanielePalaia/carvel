@@ -12,6 +12,5 @@ spec:
       -
         #@overlay/match missing_ok=True
         env:
-        - name: IMGPKG_ENABLE_IAAS_AUTH
-          value: false
-
+        - name: IMGPKG_ENABLE_IAAS_AUTH 
+          value: "false" 
