@@ -12,13 +12,8 @@ if [ -z "$BUNDLE_VERSION" ]; then
   exit 1
 fi
 
-NAMESPACE="$2"
-if [ -z "$NAMESPACE" ]; then
-  echo 'Please provide the Kubernetes namespace  where you want to deploy the PackageRepo'
-  exit 1
-fi
-
-ENVIRONMENT=${3:-"tanzu"}
+NAMESPACE=${2:-"rabbitmq-system"}
+ENVIRONMENT=${ENVIRONMENT:-"Tanzu"}
 
 DOCKER_REGISTRY_USERNAME=${DOCKER_REGISTRY_USERNAME:-$(lpass show "Shared-RabbitMQ for Kubernetes/pivnet-dev-registry-ci" --notes | jq -r .name)}
 DOCKER_REGISTRY_PASSWORD=${DOCKER_REGISTRY_PASSWORD:-$(lpass show "Shared-RabbitMQ for Kubernetes/pivnet-dev-registry-ci" --notes | jq -r .token)}

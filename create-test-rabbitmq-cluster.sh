@@ -7,13 +7,8 @@ ORANGE='\033[0;33m'
 RED='\033[0;31m'
 NO_COLOR='\033[0m'
 
-NAMESPACE="$1"
-if [ -z "$NAMESPACE" ]; then
-  echo 'Please provide the Kubernetes namespace  where you want to deploy the RabbitMQ cluster'
-  exit 1
-fi
-
-ENVIRONMENT=${2:-"tanzu"}
+NAMESPACE=${1:-"rabbitmq-system"}
+ENVIRONMENT=${ENVIRONMENT:-"openshift"}
 
 printf "%bCreating RabbitmqCluster...%b\n" "$GREEN" "$NO_COLOR"
 if [[ "$ENVIRONMENT" != "openshift" ]]; then
@@ -53,3 +48,4 @@ fi
 
 printf "%bWaiting for RabbitmqCluster to report AllReplicasReady...%b\n" "$GREEN" "$NO_COLOR"
 kubectl -n "$NAMESPACE" wait --for=condition=AllReplicasReady rabbitmqcluster/my-tanzu-rabbit --timeout=20m
+
