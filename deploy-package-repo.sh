@@ -56,8 +56,8 @@ if [[ "$ENVIRONMENT" != "openshift" ]]; then
 
     else
       export overlay_path=$(dirname -- "$0";)/openshift-overlay
-      ytt -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml -f $overlay_path/kapp-overlay.yml 
-      ytt -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/latest/download/release.yml -f $overlay_path/secretgen-overlay.yml
+      ytt -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml -f $overlay_path/kapp-overlay.yml > $overlay_path/kapp.yml 
+      ytt -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/latest/download/release.yml -f $overlay_path/secretgen-overlay.yml > $overlay_path/secretgen.yml 
       kapp deploy -y -a kc -f $overlay_path/kapp.yml
       kapp deploy -y -a sg -f $overlay_path/secretgen.yml
 
